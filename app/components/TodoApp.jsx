@@ -1,38 +1,36 @@
 var React = require('react');
+var uuid = require('node-uuid');
+
 var TodoList = require('TodoList');
 var AddTodo = require('AddTodo');
 var TodoSearch = require('TodoSearch');
-
-var uuid = require('node-uuid');
+var TodoAPI = require('TodoAPI');
 
 var TodoApp = React.createClass({
   getInitialState: function () {
+    console.log('get localStorage todos');
     return {
       showCompleted: false,
       searchText: '',
-      todos: [
-        {
-          id: uuid(),
-          text: 'Walk the dog',
-          completed: false
-        },
-        {
-          id: uuid(),
-          text: 'Clean the yard',
-          completed: true
-        },
-        {
-          id: uuid(),
-          text: 'Take out trash',
-          completed: true
-        },
-        {
-          id: uuid(),
-          text: 'Fill up the car',
-          completed: false
-        }
-      ]
+      todos: TodoAPI.getTodos()
     };
+  },
+
+  // compontentDidMount: function () {
+  //   console.log('todos did load');
+  //   this.setState({
+  //     todos: [
+  //       {
+  //         id: 1,
+  //         text: "test todo 1111",
+  //         completed: false
+  //       }
+  //     ]
+  //   });
+  // },
+
+  componentDidUpdate: function () {
+    TodoAPI.setTodos(this.state.todos);
   },
 
   handleAddTodo: function (text) {
@@ -47,6 +45,7 @@ var TodoApp = React.createClass({
       ]
     });
   },
+  
   handleToggle: function (id) {
     var updatedTodos = this.state.todos.map((todo) => {
       if (todo.id === id) {
@@ -58,12 +57,14 @@ var TodoApp = React.createClass({
 
     this.setState({todos: updatedTodos});
   },
+
   handleSearch: function (showCompleted, searchText) {
     this.setState({
       showCompleted: showCompleted,
       searchText: searchText.toLowerCase()
     })
   },
+
   render: function () {
     var {todos} = this.state;
 
